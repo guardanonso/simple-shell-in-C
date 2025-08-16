@@ -39,6 +39,10 @@ char* get_input(void){
     }
 }
 
+char* parser(void){
+    
+}
+
 int main(void){
     char* buffer = get_input();
     
