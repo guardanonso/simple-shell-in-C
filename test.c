@@ -5,14 +5,17 @@
 
 #define BUF_INCREMENT 3
 
-char** safeRealloc(char** buffer, int size){
-    char** temp_buff = realloc(buffer, size);
-    if(temp_buff == NULL){
-        free(buffer); // we can free memory because we used a temp buffer to try reallicating
-        printf("reallocation error\n");
-        return NULL; 
+int countWords(char* string){
+    int counter = 0;
+    char s[strlen(string) + 1];
+    strcpy(s, string);
+    
+    char* token = strtok(s, " ");
+    while(token!=NULL){
+        counter++;
+        token = strtok(NULL, " ");
     }
-    return temp_buff;
+    return counter;
 }
 
 char* get_input(void){
@@ -48,42 +51,37 @@ char* get_input(void){
         }
     }
 }
-char** function(){
-    char** buffer = malloc(10*sizeof(char*));
 
-    char* str1 = "first string";
-    char* str2 = "second   string";
-    
-    buffer[0] = str1;
-    // buffer[1] = str2;
-
-    return buffer;
-}
 char** inputParser(char* input){
     int counter = 0;
-    char** buffer;
     char str[strlen(input)+1];
     strcpy(str, input);
-
+    int words = countWords(str);
+    
+    if(words == 0){
+        return NULL;
+    }
+    printf("%d\n", words);
+    char** buffer = malloc((words + 1) * sizeof(char*));
+    
     char* token = strtok(str, " ");
 
-    while (token != NULL){
-        if(counter == 0){
-            buffer = malloc(1 * sizeof(char*));
-        }
-        else{
-            buffer = safeRealloc(buffer, (counter + 1) * sizeof(char*));
-        }
+    while(token!=NULL){
         buffer[counter] = strdup(token);
         counter++;
         token = strtok(NULL, " ");
     }
+    buffer[counter] = NULL;
     return buffer;
 }
 int main(){
     char* buffer = get_input();
-    char** strAr = inputParser(buffer);
-
-    // char** buf = function();
-    // printf("%s\n", buf[0]);
+    char** argsArr = inputParser(buffer);
+    if(argsArr!=NULL){
+        for(int i = 0; argsArr[i] != NULL; i++){
+            printf("%s\n", argsArr[i]);
+        }
+    }
+    free(buffer);
+    
 }
