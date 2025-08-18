@@ -24,17 +24,16 @@ char* get_input(void){
         }
         position++;
 
-        // If we have exceeded the buffer (position >= bufsize), we try reallocating
+        // If we have exceeded the buffer (position >= bufsize), we try reallocating memory
         if (position >= bufsize){
-            bufsize += BUF_INCREMENT; // incrementing bufsize 
-            char *temp_buffer = realloc(buffer, bufsize); // using e temporary buffer so that we dont lose reference to the previously allocated memory pointed by buffer, in case reallocation doesnt go well and NULL is returned
-            if (!temp_buffer) {
-                free(buffer); // we can free memory because we used a temp buffer to try reallicating
-                printf("reallocation error\n");
-                return NULL; 
+            bufsize += BUF_INCREMENT;             // incrementing bufsize 
+            char *temp_buffer = realloc(buffer, bufsize);           // safely reallicating using a temporary buffer
+            if (temp_buffer == NULL) {
+                free(buffer);                   // we are able to free memory now
+                printf("reallocation error occured\n");
+                exit(EXIT_FAILURE); 
             }
-            // If realloc works, we write temp_buffer onto buffer
-            buffer = temp_buffer;
+            buffer = temp_buffer;     // realloc worked!
         }
     }
 }

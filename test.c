@@ -18,6 +18,15 @@ int countWords(char* string){
     return counter;
 }
 
+char** safeMalloc(int size){
+    char** tmp_buff = malloc(size * sizeof(char *));
+    if(tmp_buff == NULL){
+        printf("Memory allocation failed\n");
+        exit(EXIT_FAILURE);
+    }
+    return tmp_buff;
+}
+
 char* get_input(void){
     int bufsize = BUF_INCREMENT;
     char c;
@@ -52,26 +61,26 @@ char* get_input(void){
     }
 }
 
-char** inputParser(char* input){
-    int counter = 0;
+/* parses user input and stores it in a dinamically allocated array of strings terminating with a NULL value */
+char** inputParser(char* input){ 
     char str[strlen(input)+1];
     strcpy(str, input);
     int words = countWords(str);
     
-    if(words == 0){
+    if(words == 0){   // no input, function only returns NULL
         return NULL;
     }
-    printf("%d\n", words);
-    char** buffer = malloc((words + 1) * sizeof(char*));
-    
+
+    char** buffer = safeMalloc(words + 1);  // calling safeMalloc() to allocate enough memory to store the whole array
     char* token = strtok(str, " ");
 
-    while(token!=NULL){
-        buffer[counter] = strdup(token);
-        counter++;
+    int index = 0; 
+    while(token!=NULL){             // actual parsing cycle using strtok() and allocating the string using the index var
+        buffer[index] = strdup(token);
+        index++;
         token = strtok(NULL, " ");
     }
-    buffer[counter] = NULL;
+    buffer[index] = NULL;      // adding NULL terminator at the end of the array
     return buffer;
 }
 int main(){
@@ -81,7 +90,5 @@ int main(){
         for(int i = 0; argsArr[i] != NULL; i++){
             printf("%s\n", argsArr[i]);
         }
-    }
-    free(buffer);
-    
+    }   
 }
