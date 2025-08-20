@@ -2,9 +2,25 @@
 #include <unistd.h>
 #include <string.h>
 #include <stdlib.h>
+#include <sys/types.h>
 
-#define BUF_INCREMENT 3
+#define BUF_INCREMENT 3 
 
+/* idk */
+void run(const char* file, char* argv[]){
+    pid_t pid = fork();
+    if(pid == 0){
+        int status = execvp(file, argv);
+        if (status == -1) {
+            printf("Process did not terminate correctly\n");
+            exit(1);
+        } 
+    }else if (pid < 0){
+        perror("fork failed"); 
+    }
+}
+
+/* utility function to count words in user input */
 int countWords(char* string){
     int counter = 0;
     char s[strlen(string) + 1];
@@ -18,6 +34,7 @@ int countWords(char* string){
     return counter;
 }
 
+/* Just a malloc() wrapper to safely use malloc() */
 char** safeMalloc(int size){
     char** tmp_buff = malloc(size * sizeof(char *));
     if(tmp_buff == NULL){
@@ -27,6 +44,7 @@ char** safeMalloc(int size){
     return tmp_buff;
 }
 
+/* safely reads standard input and returns it as string */
 char* get_input(void){
     int bufsize = BUF_INCREMENT;
     char c;
@@ -83,12 +101,17 @@ char** inputParser(char* input){
     buffer[index] = NULL;      // adding NULL terminator at the end of the array
     return buffer;
 }
+
+
+void freeMemory(char** buffer){
+    for(int i = 0; buffer[i] != NULL; i++){
+        free(buffer[i]);
+    }
+}
+
 int main(){
-    char* buffer = get_input();
-    char** argsArr = inputParser(buffer);
-    if(argsArr!=NULL){
-        for(int i = 0; argsArr[i] != NULL; i++){
-            printf("%s\n", argsArr[i]);
-        }
-    }   
+    // char* user_input = get_input();
+    // char** argsArr = inputParser(user_input);
+    // freeMemory(argsArr);
+    // free(user_input);
 }
