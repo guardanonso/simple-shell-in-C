@@ -6,8 +6,8 @@
 
 int main(void){
       
-    char *args[] = {"man","ls", NULL};
-    execvp("man", args);
+    char *args[] = {"ls","-l", NULL};
+    execvp("ls", args);
     perror("execvp");
     return 1;
 }

@@ -3,21 +3,22 @@
 #include <string.h>
 #include <stdlib.h>
 #include <sys/types.h>
+#include <sys/wait.h>
 
 #define BUF_INCREMENT 3 
 
 /* idk */
-void run(const char* file, char* argv[]){
+void run(const char* command, char* argsArr[]){
     pid_t pid = fork();
     if(pid == 0){
-        int status = execvp(file, argv);
-        if (status == -1) {
+        // calling the execvp() system call
+        int status_code = execvp(command, argsArr);
+        if (status_code == -1) {
             printf("Process did not terminate correctly\n");
             exit(1);
-        } 
-    }else if (pid < 0){
-        perror("fork failed"); 
+        }
     }
+    wait(NULL);
 }
 
 /* utility function to count words in user input */
@@ -110,8 +111,12 @@ void freeMemory(char** buffer){
 }
 
 int main(){
-    // char* user_input = get_input();
-    // char** argsArr = inputParser(user_input);
-    // freeMemory(argsArr);
-    // free(user_input);
+    while(1){
+        char* user_input = get_input();
+        char** argsArr = inputParser(user_input);
+        char* command = argsArr[0];
+        run(command, argsArr);
+        free(user_input);
+        freeMemory(argsArr);
+    }
 }
